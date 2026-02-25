@@ -1,0 +1,78 @@
+{
+  "welcome": {
+    "title": "OPENCLAW Assistant",
+    "subtitle": "One-click OpenClaw AI Agent Installer",
+    "envCheck": "Environment Check",
+    "envCheckDesc": "Checking your system environment...",
+    "recheck": "Re-check",
+    "next": "Next",
+    "checking": "Checking...",
+    "os": {
+      "label": "Operating System",
+      "pass": "Windows 10 or higher",
+      "fail": "Requires Windows 10 or higher",
+      "devMode": "Dev mode (Linux)"
+    },
+    "nodejs": {
+      "label": "Node.js",
+      "pass": "Node.js {{version}} installed",
+      "fail": "Node.js not installed (requires >= 22)",
+      "versionLow": "Node.js version too low ({{version}}, requires >= 22)"
+    },
+    "docker": {
+      "label": "Docker",
+      "pass": "Docker {{version}} installed",
+      "fail": "Docker not installed (required for Docker mode)",
+      "optional": "Optional — required for Docker install mode"
+    },
+    "wsl2": {
+      "label": "WSL2",
+      "pass": "WSL2 enabled",
+      "fail": "WSL2 not enabled (required for Docker mode)",
+      "optional": "Optional — required for Docker install mode"
+    },
+    "disk": {
+      "label": "Disk Space",
+      "pass": "Available space: {{space}}",
+      "fail": "Insufficient disk space (requires >= 5GB, current: {{space}})"
+    },
+    "memory": {
+      "label": "System Memory",
+      "pass": "Memory: {{size}}",
+      "fail": "Insufficient memory (requires >= 4GB, current: {{size}})"
+    },
+    "network": {
+      "label": "Network",
+      "pass": "Network connection OK",
+      "fail": "Cannot connect to network"
+    }
+  },
+  "modeSelect": {
+    "title": "Select Install Mode",
+    "subtitle": "Choose the installation method that suits you",
+    "back": "Back",
+    "next": "Next",
+    "npm": {
+      "title": "Standard Install",
+      "badge": "Recommended for beginners",
+      "desc": "Install OpenClaw globally via npm, simple and fast",
+      "features": [
+        "Auto-install Node.js (if not installed)",
+        "Install openclaw via npm globally",
+        "Auto-configure system PATH",
+        "Create desktop shortcut"
+      ]
+    },
+    "docker": {
+      "title": "Docker Install",
+      "badge": "For experienced users",
+      "desc": "Run OpenClaw in Docker container, better isolation",
+      "features": [
+        "Detect/guide Docker Desktop installation",
+        "Pull OpenClaw Docker image",
+        "Configure Docker Compose",
+        "Create start/stop shortcuts"
+      ]
+    }
+  }
+}

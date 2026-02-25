@@ -1,0 +1,78 @@
+{
+  "welcome": {
+    "title": "OPENCLAW 助手",
+    "subtitle": "一键安装 OpenClaw AI 代理",
+    "envCheck": "环境检测",
+    "envCheckDesc": "正在检测您的系统环境...",
+    "recheck": "重新检测",
+    "next": "下一步",
+    "checking": "检测中...",
+    "os": {
+      "label": "操作系统",
+      "pass": "Windows 10 或更高版本",
+      "fail": "需要 Windows 10 或更高版本",
+      "devMode": "开发模式（Linux）"
+    },
+    "nodejs": {
+      "label": "Node.js",
+      "pass": "已安装 Node.js {{version}}",
+      "fail": "未安装 Node.js（需要 >= 22）",
+      "versionLow": "Node.js 版本过低（{{version}}，需要 >= 22）"
+    },
+    "docker": {
+      "label": "Docker",
+      "pass": "已安装 Docker {{version}}",
+      "fail": "未安装 Docker（Docker 模式需要）",
+      "optional": "可选 — Docker 安装模式需要"
+    },
+    "wsl2": {
+      "label": "WSL2",
+      "pass": "WSL2 已启用",
+      "fail": "WSL2 未启用（Docker 模式需要）",
+      "optional": "可选 — Docker 安装模式需要"
+    },
+    "disk": {
+      "label": "磁盘空间",
+      "pass": "可用空间 {{space}}",
+      "fail": "磁盘空间不足（需要 >= 5GB，当前 {{space}}）"
+    },
+    "memory": {
+      "label": "系统内存",
+      "pass": "内存 {{size}}",
+      "fail": "内存不足（需要 >= 4GB，当前 {{size}}）"
+    },
+    "network": {
+      "label": "网络连接",
+      "pass": "网络连接正常",
+      "fail": "无法连接网络"
+    }
+  },
+  "modeSelect": {
+    "title": "选择安装模式",
+    "subtitle": "请选择适合您的安装方式",
+    "back": "上一步",
+    "next": "下一步",
+    "npm": {
+      "title": "一般安装",
+      "badge": "推荐新手",
+      "desc": "通过 npm 全局安装 OpenClaw，简单快速",
+      "features": [
+        "自动安装 Node.js（如未安装）",
+        "通过 npm 全局安装 openclaw",
+        "自动配置系统 PATH",
+        "创建桌面快捷方式"
+      ]
+    },
+    "docker": {
+      "title": "Docker 安装",
+      "badge": "推荐有经验用户",
+      "desc": "使用 Docker 容器运行 OpenClaw，隔离性好",
+      "features": [
+        "检测/引导安装 Docker Desktop",
+        "拉取 OpenClaw Docker 镜像",
+        "配置 Docker Compose",
+        "创建启动/停止快捷方式"
+      ]
+    }
+  }
+}

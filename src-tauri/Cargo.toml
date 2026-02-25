@@ -1,0 +1,21 @@
+[package]
+name = "openclaw-installer"
+version = "0.1.0"
+description = "OPENCLAW Assistant - One-click OpenClaw Installer"
+authors = ["you"]
+edition = "2021"
+
+[lib]
+name = "openclaw_installer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sysinfo = "0.33"
+tokio = { version = "1", features = ["full"] }
