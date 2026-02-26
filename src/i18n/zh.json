@@ -1,4 +1,15 @@
 {
+  "wizard": {
+    "steps": {
+      "envCheck": "环境检测",
+      "installMode": "安装模式",
+      "depInstall": "依赖安装",
+      "modelConfig": "模型配置",
+      "platformConfig": "平台配置",
+      "installing": "安装",
+      "complete": "完成"
+    }
+  },
   "welcome": {
     "title": "OPENCLAW 助手",
     "subtitle": "一键安装 OpenClaw AI 代理",
@@ -74,5 +85,110 @@
         "创建启动/停止快捷方式"
       ]
     }
+  },
+  "depInstall": {
+    "title": "依赖安装",
+    "subtitle": "正在准备安装环境...",
+    "dependencies": "依赖项",
+    "useMirror": "使用国内镜像源",
+    "allInstalled": "所有依赖已就绪",
+    "done": "已安装",
+    "error": "安装失败",
+    "installing": "正在安装...",
+    "back": "上一步",
+    "next": "下一步",
+    "fallback": {
+      "title": "自动安装失败",
+      "reason": "原因：{{reason}}",
+      "manual": "请手动安装：",
+      "openWebsite": "打开官网下载",
+      "recheck": "我已安装，重新检测"
+    }
+  },
+  "modelConfig": {
+    "title": "模型配置",
+    "subtitle": "选择 AI 模型提供商并配置 API 密钥",
+    "back": "上一步",
+    "skip": "跳过",
+    "next": "下一步",
+    "showMore": "展开更多提供商...",
+    "settings": "配置",
+    "endpoint": "API 端点",
+    "model": "模型",
+    "testConnection": "测试连接",
+    "placeholder": {
+      "title": "即将推出",
+      "desc": "模型配置功能将在后续版本中提供",
+      "hint": "安装完成后，您可以手动编辑 ~/.openclaw/openclaw.json 来配置模型。"
+    }
+  },
+  "platformConfig": {
+    "title": "平台配置",
+    "subtitle": "选择要连接的消息平台（可选）",
+    "back": "上一步",
+    "skip": "跳过",
+    "next": "下一步",
+    "howToGet": "如何获取？",
+    "placeholder": {
+      "title": "即将推出",
+      "desc": "平台配置功能将在后续版本中提供",
+      "hint": "安装完成后，您可以通过 openclaw onboard 命令来配置消息平台。"
+    }
+  },
+  "installing": {
+    "title": "正在安装 OpenClaw",
+    "inProgress": "请稍候，正在安装中...",
+    "success": "安装成功！",
+    "failed": "安装过程中出现错误",
+    "steps": "安装步骤",
+    "retry": "重试",
+    "showLog": "展开日志",
+    "hideLog": "收起日志"
+  },
+  "complete": {
+    "title": "安装完成！",
+    "version": "OpenClaw {{version}} 已成功安装",
+    "info": "服务信息",
+    "gateway": "Gateway 地址",
+    "openWebchat": "打开 WebChat",
+    "viewTutorial": "查看使用教程",
+    "openDashboard": "打开管理面板",
+    "close": "关闭"
+  },
+  "dashboard": {
+    "title": "管理面板",
+    "gatewayStatus": "Gateway 状态",
+    "running": "运行中",
+    "stopped": "已停止",
+    "start": "启动",
+    "stop": "停止",
+    "restart": "重启",
+    "port": "端口",
+    "connectedPlatforms": "已连接平台",
+    "noPlatforms": "暂无已连接平台",
+    "quickActions": "快捷操作",
+    "openWebchat": "打开 WebChat",
+    "openSettings": "设置",
+    "openDoctor": "诊断",
+    "backToWizard": "返回安装向导"
+  },
+  "settings": {
+    "title": "设置",
+    "modelSection": "模型配置",
+    "platformSection": "平台配置",
+    "gatewaySection": "Gateway 设置",
+    "gatewayPort": "端口",
+    "save": "保存",
+    "saved": "已保存",
+    "back": "返回"
+  },
+  "doctor": {
+    "title": "系统诊断",
+    "subtitle": "检查 OpenClaw 运行环境",
+    "running": "正在检查...",
+    "allGood": "所有检查通过",
+    "hasIssues": "发现问题",
+    "recheck": "重新检查",
+    "back": "返回"
   }
 }

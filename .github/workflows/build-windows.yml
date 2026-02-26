@@ -3,6 +3,7 @@ name: Build Windows
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
 
 jobs:
@@ -33,6 +34,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tauriScript: npx tauri
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: ${{ github.ref_type == 'tag' && format('OpenClaw Installer {0}', github.ref_name) || '' }}
+          releaseBody: 'Windows installer for OpenClaw'
+          releaseDraft: false
+          prerelease: false
 
       - name: Upload MSI installer
         uses: actions/upload-artifact@v4

@@ -99,7 +99,7 @@ export default function ModeSelect() {
             <ArrowLeft className="h-4 w-4" />
             {t("modeSelect.back")}
           </Button>
-          <Button onClick={() => navigate("/model-config")} disabled={!installMode}>
+          <Button onClick={() => navigate("/dependency-install")} disabled={!installMode}>
             {t("modeSelect.next")}
             <ArrowRight className="h-4 w-4" />
           </Button>

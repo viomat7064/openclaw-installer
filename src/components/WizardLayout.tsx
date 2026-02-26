@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { LanguageSwitch } from "./LanguageSwitch";
 
 interface WizardLayoutProps {
@@ -7,9 +8,19 @@ interface WizardLayoutProps {
   totalSteps?: number;
 }
 
-const stepLabels = ["环境检测", "安装模式", "模型配置", "平台配置", "安装", "完成"];
+export function WizardLayout({ children, step, totalSteps = 7 }: WizardLayoutProps) {
+  const { t } = useTranslation();
 
-export function WizardLayout({ children, step, totalSteps = 6 }: WizardLayoutProps) {
+  const stepLabels = [
+    t("wizard.steps.envCheck"),
+    t("wizard.steps.installMode"),
+    t("wizard.steps.depInstall"),
+    t("wizard.steps.modelConfig"),
+    t("wizard.steps.platformConfig"),
+    t("wizard.steps.installing"),
+    t("wizard.steps.complete"),
+  ];
+
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
@@ -47,7 +58,7 @@ export function WizardLayout({ children, step, totalSteps = 6 }: WizardLayoutPro
       )}
 
       {/* Content */}
-      <main className="flex-1 overflow-y-auto px-6 py-4">{children}</main>
+      <main className="flex-1 overflow-y-auto px-6 py-4 page-enter">{children}</main>
     </div>
   );
 }

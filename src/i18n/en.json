@@ -1,4 +1,15 @@
 {
+  "wizard": {
+    "steps": {
+      "envCheck": "Environment",
+      "installMode": "Install Mode",
+      "depInstall": "Dependencies",
+      "modelConfig": "Model Config",
+      "platformConfig": "Platforms",
+      "installing": "Install",
+      "complete": "Complete"
+    }
+  },
   "welcome": {
     "title": "OPENCLAW Assistant",
     "subtitle": "One-click OpenClaw AI Agent Installer",
@@ -74,5 +85,110 @@
         "Create start/stop shortcuts"
       ]
     }
+  },
+  "depInstall": {
+    "title": "Dependency Installation",
+    "subtitle": "Preparing installation environment...",
+    "dependencies": "Dependencies",
+    "useMirror": "Use China mirror",
+    "allInstalled": "All dependencies are ready",
+    "done": "Installed",
+    "error": "Installation failed",
+    "installing": "Installing...",
+    "back": "Back",
+    "next": "Next",
+    "fallback": {
+      "title": "Auto-installation failed",
+      "reason": "Reason: {{reason}}",
+      "manual": "Please install manually:",
+      "openWebsite": "Open official website",
+      "recheck": "I've installed it, re-check"
+    }
+  },
+  "modelConfig": {
+    "title": "Model Configuration",
+    "subtitle": "Select an AI model provider and configure your API key",
+    "back": "Back",
+    "skip": "Skip",
+    "next": "Next",
+    "showMore": "Show more providers...",
+    "settings": "Settings",
+    "endpoint": "API Endpoint",
+    "model": "Model",
+    "testConnection": "Test Connection",
+    "placeholder": {
+      "title": "Coming Soon",
+      "desc": "Model configuration will be available in a future version",
+      "hint": "After installation, you can manually edit ~/.openclaw/openclaw.json to configure models."
+    }
+  },
+  "platformConfig": {
+    "title": "Platform Configuration",
+    "subtitle": "Select messaging platforms to connect (optional)",
+    "back": "Back",
+    "skip": "Skip",
+    "next": "Next",
+    "howToGet": "How to get?",
+    "placeholder": {
+      "title": "Coming Soon",
+      "desc": "Platform configuration will be available in a future version",
+      "hint": "After installation, you can use the openclaw onboard command to configure platforms."
+    }
+  },
+  "installing": {
+    "title": "Installing OpenClaw",
+    "inProgress": "Please wait, installation in progress...",
+    "success": "Installation successful!",
+    "failed": "An error occurred during installation",
+    "steps": "Installation Steps",
+    "retry": "Retry",
+    "showLog": "Show log",
+    "hideLog": "Hide log"
+  },
+  "complete": {
+    "title": "Installation Complete!",
+    "version": "OpenClaw {{version}} has been successfully installed",
+    "info": "Service Info",
+    "gateway": "Gateway Address",
+    "openWebchat": "Open WebChat",
+    "viewTutorial": "View Tutorial",
+    "openDashboard": "Open Dashboard",
+    "close": "Close"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "gatewayStatus": "Gateway Status",
+    "running": "Running",
+    "stopped": "Stopped",
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "port": "Port",
+    "connectedPlatforms": "Connected Platforms",
+    "noPlatforms": "No platforms connected",
+    "quickActions": "Quick Actions",
+    "openWebchat": "Open WebChat",
+    "openSettings": "Settings",
+    "openDoctor": "Diagnostics",
+    "backToWizard": "Back to Wizard"
+  },
+  "settings": {
+    "title": "Settings",
+    "modelSection": "Model Configuration",
+    "platformSection": "Platform Configuration",
+    "gatewaySection": "Gateway Settings",
+    "gatewayPort": "Port",
+    "save": "Save",
+    "saved": "Saved",
+    "back": "Back"
+  },
+  "doctor": {
+    "title": "System Diagnostics",
+    "subtitle": "Check OpenClaw runtime environment",
+    "running": "Checking...",
+    "allGood": "All checks passed",
+    "hasIssues": "Issues found",
+    "recheck": "Re-check",
+    "back": "Back"
   }
 }
