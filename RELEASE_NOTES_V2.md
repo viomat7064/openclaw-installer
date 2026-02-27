@@ -36,20 +36,18 @@ OpenClaw Installer V2 正式发布！全新的跨平台离线安装器，支持 
 
 ## 📦 下载
 
-### Windows
+### 从 GitHub Actions 下载构建产物
 
-| 安装包 | 大小 | 说明 |
-|--------|------|------|
-| [NSIS 安装包](https://github.com/viomat7064/openclaw-installer/releases/download/v2.0.0/OpenClaw-Installer_2.0.0_x64-setup.exe) | 3MB | 推荐，支持自定义路径 |
-| [MSI 安装包](https://github.com/viomat7064/openclaw-installer/releases/download/v2.0.0/OpenClaw-Installer_2.0.0_x64_en-US.msi) | 4MB | 企业批量部署 |
+**Windows (Build #22475283735)**
+- [MSI 安装包 (4MB)](https://github.com/viomat7064/openclaw-installer/actions/runs/22475283735) - 企业批量部署
+- [NSIS 安装包 (3MB)](https://github.com/viomat7064/openclaw-installer/actions/runs/22475283735) - 推荐，支持自定义路径
 
-### macOS
+**macOS (Build #22474759631)**
+- [DMG 磁盘镜像 (5MB)](https://github.com/viomat7064/openclaw-installer/actions/runs/22474759631) - 推荐，拖拽安装
+- [APP 应用包 (5MB)](https://github.com/viomat7064/openclaw-installer/actions/runs/22474759631) - 直接运行
 
-| 安装包 | 大小 | 说明 |
-|--------|------|------|
-| [DMG 磁盘镜像](https://github.com/viomat7064/openclaw-installer/releases/download/v2.0.0/OpenClaw-Installer_2.0.0_universal.dmg) | 5MB | 推荐，拖拽安装 |
-| [APP 应用包](https://github.com/viomat7064/openclaw-installer/releases/download/v2.0.0/OpenClaw-Installer.app.tar.gz) | 5MB | 直接运行 |
-
+> **下载说明**: 点击链接进入 Actions 页面，在 "Artifacts" 部分下载对应的安装包
+>
 > **macOS 注意**: 首次打开未签名应用需要右键选择"打开"
 
 ## 🔧 系统要求
