@@ -32,12 +32,17 @@ fn check_os() -> (bool, String) {
     let info = System::long_os_version().unwrap_or_default();
 
     if cfg!(target_os = "windows") {
-        // Check Windows 10+
+        // Check Windows 10+ (Windows 11 reports as 10.0.22000+)
         let os_ok = System::os_version()
-            .and_then(|v| v.split('.').next().map(|s| s.to_string()))
-            .and_then(|major| major.parse::<u32>().ok())
+            .and_then(|v| {
+                // Try parsing first segment as major version
+                v.split('.').next().and_then(|s| s.parse::<u32>().ok())
+            })
             .map(|major| major >= 10)
-            .unwrap_or(false);
+            .unwrap_or_else(|| {
+                // Fallback: check if info contains "Windows 10" or "Windows 11"
+                info.contains("Windows 10") || info.contains("Windows 11")
+            });
         (os_ok, info)
     } else {
         // Linux/macOS dev mode — always OK
