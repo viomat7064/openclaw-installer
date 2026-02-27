@@ -81,9 +81,9 @@
 ## 📦 构建产物
 
 ### Windows (v2-dev)
-- ✅ NSIS 安装包
-- ✅ MSI 安装包
-- ⏳ 等待 CI/CD 构建
+- ✅ MSI 安装包 (4MB)
+- ✅ NSIS 安装包 (3MB)
+- ✅ CI/CD Build #22475283735 成功
 
 ### macOS (v2-macos → v2-dev)
 - ✅ DMG 磁盘镜像 (5MB)
@@ -231,11 +231,17 @@
 - V2: ⏳ 待发布
 
 ### GitHub Actions
-- Windows: ⏳ 待构建
+- Windows: https://github.com/viomat7064/openclaw-installer/actions/runs/22475283735
 - macOS: https://github.com/viomat7064/openclaw-installer/actions/runs/22474759631
 
 ### 下载命令
 ```bash
+# Windows MSI
+gh run download 22475283735 -n openclaw-installer-windows-msi
+
+# Windows NSIS
+gh run download 22475283735 -n openclaw-installer-windows-nsis
+
 # macOS DMG
 gh run download 22474759631 -n macos-dmg
 
@@ -254,11 +260,12 @@ OpenClaw Installer V2 开发完成！
 - ✅ 完整的 CI/CD
 - ✅ 详细的文档
 
-**状态**: 开发完成，等待实际环境测试验证
+**状态**: 开发完成，CI/CD 构建成功，等待实际环境测试验证
 
-**分支**: v2-dev (17 commits)
-**最新提交**: 242a711
-**CI/CD**: macOS ✅ | Windows ⏳
+**分支**: v2-dev (19 commits)
+**最新提交**: 620dab5
+**CI/CD**: Windows ✅ (Build #22475283735) | macOS ✅ (Build #22474759631)
+**产物**: MSI (4MB) + NSIS (3MB) + DMG (5MB) + APP (5MB)
 
 ---
 
