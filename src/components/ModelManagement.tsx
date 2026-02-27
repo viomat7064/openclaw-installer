@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useModelManagement, ModelParameters, ModelPreset } from '../hooks/useModelManagement';
-import { useTranslation } from 'react-i18next';
 
 export function ModelManagement() {
-  const { t } = useTranslation();
   const { providers, presets, stats, loading, validateParameters } = useModelManagement();
   const [selectedProvider, setSelectedProvider] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
