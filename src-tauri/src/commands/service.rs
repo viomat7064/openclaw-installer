@@ -1,6 +1,8 @@
 use serde::Serialize;
 use std::process::Command;
 
+use super::config::read_openclaw_config;
+
 #[derive(Debug, Serialize)]
 pub struct GatewayStatusResult {
     pub running: bool,
@@ -68,7 +70,8 @@ pub async fn gateway_restart() -> Result<String, String> {
 
 #[tauri::command]
 pub async fn gateway_status() -> Result<GatewayStatusResult, String> {
-    let port: u16 = 18789;
+    let config = read_openclaw_config().await.unwrap_or_default();
+    let port = config.gateway_port;
     let running = std::net::TcpStream::connect_timeout(
         &format!("127.0.0.1:{}", port).parse().unwrap(),
         std::time::Duration::from_secs(2),

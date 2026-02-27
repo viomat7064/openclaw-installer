@@ -178,6 +178,10 @@
     "platformSection": "Platform Configuration",
     "gatewaySection": "Gateway Settings",
     "gatewayPort": "Port",
+    "provider": "Provider",
+    "model": "Model",
+    "apiKey": "API Key",
+    "apiEndpoint": "API Endpoint",
     "save": "Save",
     "saved": "Saved",
     "back": "Back"

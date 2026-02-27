@@ -61,6 +61,7 @@ export function useInstallation() {
             { id: "write_config", status: "pending", message: "Write configuration" },
             { id: "start_gateway", status: "pending", message: "Start Gateway" },
             { id: "verify_gateway", status: "pending", message: "Verify Gateway" },
+            { id: "create_shortcut", status: "pending", message: "Create desktop shortcut" },
           ]
         : [
             { id: "docker_setup", status: "pending", message: "Setup Docker environment" },

@@ -178,6 +178,10 @@
     "platformSection": "平台配置",
     "gatewaySection": "Gateway 设置",
     "gatewayPort": "端口",
+    "provider": "提供商",
+    "model": "模型",
+    "apiKey": "API 密钥",
+    "apiEndpoint": "API 端点",
     "save": "保存",
     "saved": "已保存",
     "back": "返回"

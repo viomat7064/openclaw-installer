@@ -52,7 +52,7 @@ export default function ModelConfig() {
     try {
       const msg = await invoke<string>("test_api_connection", {
         provider: modelConfig.provider,
-        apiKey: modelConfig.apiKey,
+        api_key: modelConfig.apiKey,
         endpoint: modelConfig.endpoint,
         model: modelConfig.model,
       });

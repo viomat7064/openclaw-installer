@@ -56,7 +56,7 @@ export default function SettingsPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Provider</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t("settings.provider")}</label>
               <input
                 type="text"
                 value={config.model_provider ?? ""}
@@ -65,7 +65,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">Model</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t("settings.model")}</label>
               <input
                 type="text"
                 value={config.model_name ?? ""}
@@ -74,7 +74,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">API Key</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t("settings.apiKey")}</label>
               <input
                 type="password"
                 value={config.api_key ?? ""}
@@ -83,7 +83,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <label className="text-xs text-muted-foreground mb-1 block">API Endpoint</label>
+              <label className="text-xs text-muted-foreground mb-1 block">{t("settings.apiEndpoint")}</label>
               <input
                 type="text"
                 value={config.api_endpoint ?? ""}

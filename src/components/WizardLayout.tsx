@@ -26,7 +26,7 @@ export function WizardLayout({ children, step, totalSteps = 7 }: WizardLayoutPro
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-3 border-b">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-bold tracking-tight">OPENCLAW 助手</h1>
+          <h1 className="text-lg font-bold tracking-tight">{t("welcome.title")}</h1>
           {step !== undefined && (
             <span className="text-xs text-muted-foreground">
               {step}/{totalSteps}
