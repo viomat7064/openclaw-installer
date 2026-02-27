@@ -175,7 +175,7 @@ async fn install_openclaw_npm(app: &AppHandle, use_mirror: bool) -> Result<(), S
     let mut args = vec!["install", "-g", "openclaw@latest"];
     let registry_arg;
     if use_mirror {
-        registry_arg = format!("--registry=https://registry.npmmirror.com");
+        registry_arg = "--registry=https://registry.npmmirror.com".to_string();
         args.push(&registry_arg);
     }
 

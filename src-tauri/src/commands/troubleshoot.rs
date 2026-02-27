@@ -120,7 +120,7 @@ fn check_nodejs() -> Result<(), String> {
 
 fn check_openclaw_installed() -> Result<(), String> {
     let output = Command::new("npm")
-        .args(&["list", "-g", "openclaw"])
+        .args(["list", "-g", "openclaw"])
         .output()
         .map_err(|_| "Failed to check OpenClaw installation".to_string())?;
 
@@ -177,16 +177,18 @@ async fn fix_port_conflict(port: u16) -> Result<String, String> {
     #[cfg(not(target_os = "windows"))]
     {
         // Unix-like systems
+        let port_arg = format!(":{}", port);
         let output = Command::new("lsof")
-            .args(&["-ti", &format!(":{}", port)])
+            .args(["-ti", &port_arg])
             .output()
             .map_err(|e| format!("Failed to find process: {}", e))?;
 
         let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
         if !output_str.is_empty() {
             if let Ok(pid) = output_str.parse::<i32>() {
+                let pid_str = pid.to_string();
                 Command::new("kill")
-                    .args(&["-9", &pid.to_string()])
+                    .args(["-9", &pid_str])
                     .output()
                     .map_err(|e| format!("Failed to kill process: {}", e))?;
 

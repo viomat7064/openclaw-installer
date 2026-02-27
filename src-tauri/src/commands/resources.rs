@@ -141,7 +141,7 @@ pub async fn extract_bundled_openclaw(
 
     // Extract using tar command
     let output = std::process::Command::new("tar")
-        .args(&[
+        .args([
             "-xzf",
             tarball.to_str().unwrap(),
             "-C",
