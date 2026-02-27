@@ -260,23 +260,44 @@ async fn install_openclaw_npm(app: &AppHandle, use_mirror: bool) -> Result<(), S
         }
     }
 
-    // Step 5: Verify Gateway
+    // Step 5: Verify Gateway with retry logic
     emit_step(app, "verify_gateway", "running", "Verifying Gateway...", None);
 
-    // Wait a moment for gateway to start
-    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    // Wait longer for gateway to start
+    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
 
-    let gateway_ok = std::net::TcpStream::connect_timeout(
-        &"127.0.0.1:18789".parse().unwrap(),
-        std::time::Duration::from_secs(5),
-    )
-    .is_ok();
+    // Implement exponential backoff retry (3 attempts)
+    let mut gateway_ok = false;
+    let mut attempt = 0;
+    let max_attempts = 3;
 
-    if gateway_ok {
-        emit_step(app, "verify_gateway", "done", "Gateway is running on port 18789", None);
-    } else {
-        emit_step(app, "verify_gateway", "error", "Gateway is not responding on port 18789", None);
-        return Err("Gateway verification failed".to_string());
+    while attempt < max_attempts && !gateway_ok {
+        attempt += 1;
+        let wait_secs = 2 + (attempt as u64);
+
+        match std::net::TcpStream::connect_timeout(
+            &"127.0.0.1:18789".parse().unwrap(),
+            std::time::Duration::from_secs(5),
+        ) {
+            Ok(_) => {
+                gateway_ok = true;
+                emit_step(app, "verify_gateway", "done", "Gateway is running on port 18789", None);
+            }
+            Err(_) if attempt < max_attempts => {
+                emit_step(
+                    app,
+                    "verify_gateway",
+                    "running",
+                    &format!("Gateway not responding, retrying... (attempt {}/{})", attempt, max_attempts),
+                    None,
+                );
+                tokio::time::sleep(std::time::Duration::from_secs(wait_secs)).await;
+            }
+            Err(_) => {
+                emit_step(app, "verify_gateway", "error", "Gateway is not responding on port 18789", None);
+                return Err("Gateway verification failed".to_string());
+            }
+        }
     }
 
     // Step 6: Create desktop shortcut
@@ -346,22 +367,48 @@ services:
     }
     emit_step(app, "docker_start", "done", "Containers started", Some(log));
 
-    // Step 4: Verify
+    // Step 4: Verify Gateway with retry logic
     emit_step(app, "verify_gateway", "running", "Verifying Gateway...", None);
 
     tokio::time::sleep(std::time::Duration::from_secs(5)).await;
 
-    let gateway_ok = std::net::TcpStream::connect_timeout(
-        &"127.0.0.1:18789".parse().unwrap(),
-        std::time::Duration::from_secs(5),
-    )
-    .is_ok();
+    // Implement exponential backoff retry (3 attempts)
+    let mut gateway_ok = false;
+    let mut attempt = 0;
+    let max_attempts = 3;
+
+    while attempt < max_attempts && !gateway_ok {
+        attempt += 1;
+        let wait_secs = 2 + (attempt as u64);
+
+        match std::net::TcpStream::connect_timeout(
+            &"127.0.0.1:18789".parse().unwrap(),
+            std::time::Duration::from_secs(5),
+        ) {
+            Ok(_) => {
+                gateway_ok = true;
+                emit_step(app, "verify_gateway", "done", "Gateway is running on port 18789", None);
+            }
+            Err(_) if attempt < max_attempts => {
+                emit_step(
+                    app,
+                    "verify_gateway",
+                    "running",
+                    &format!("Gateway not responding, retrying... (attempt {}/{})", attempt, max_attempts),
+                    None,
+                );
+                tokio::time::sleep(std::time::Duration::from_secs(wait_secs)).await;
+            }
+            Err(_) => {
+                emit_step(app, "verify_gateway", "error", "Gateway is not responding on port 18789", None);
+                return Err("Gateway verification failed".to_string());
+            }
+        }
+    }
 
     if gateway_ok {
-        emit_step(app, "verify_gateway", "done", "Gateway is running on port 18789", None);
         Ok(())
     } else {
-        emit_step(app, "verify_gateway", "error", "Gateway is not responding", None);
         Err("Gateway verification failed".to_string())
     }
 }

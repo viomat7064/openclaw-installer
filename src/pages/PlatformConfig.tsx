@@ -12,7 +12,6 @@ const PLATFORMS = [
   { id: "telegram", name: "Telegram", tokenLabel: "Bot Token", url: "https://core.telegram.org/bots#botfather" },
   { id: "discord", name: "Discord", tokenLabel: "Bot Token", url: "https://discord.com/developers/applications" },
   { id: "slack", name: "Slack", tokenLabel: "Bot Token", url: "https://api.slack.com/apps" },
-  { id: "wechat", name: "微信", tokenLabel: "AppID + AppSecret", url: "https://mp.weixin.qq.com/" },
 ];
 
 export default function PlatformConfig() {

@@ -63,6 +63,14 @@ interface WizardState {
   setModelConfig: (c: ModelConfig) => void;
   platforms: PlatformEntry[];
   setPlatforms: (p: PlatformEntry[]) => void;
+  installProgress: number;
+  setInstallProgress: (p: number) => void;
+  currentStepOutput: string;
+  setCurrentStepOutput: (o: string) => void;
+  failedStepId: string | null;
+  setFailedStepId: (id: string | null) => void;
+  autoFixAttempts: number;
+  setAutoFixAttempts: (a: number) => void;
 }
 
 const WizardContext = createContext<WizardState | null>(null);
@@ -82,6 +90,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     model: "",
   });
   const [platforms, setPlatforms] = useState<PlatformEntry[]>([]);
+  const [installProgress, setInstallProgress] = useState(0);
+  const [currentStepOutput, setCurrentStepOutput] = useState("");
+  const [failedStepId, setFailedStepId] = useState<string | null>(null);
+  const [autoFixAttempts, setAutoFixAttempts] = useState(0);
 
   return (
     <WizardContext.Provider
@@ -95,6 +107,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         useMirror, setUseMirror,
         modelConfig, setModelConfig,
         platforms, setPlatforms,
+        installProgress, setInstallProgress,
+        currentStepOutput, setCurrentStepOutput,
+        failedStepId, setFailedStepId,
+        autoFixAttempts, setAutoFixAttempts,
       }}
     >
       {children}
