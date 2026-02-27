@@ -2,11 +2,38 @@
 
 # OpenClaw Installer
 
-一键安装 [OpenClaw](https://github.com/openclaw/openclaw) AI 代理的 Windows 桌面安装程序。
+一键安装 [OpenClaw](https://github.com/openclaw/openclaw) AI 代理的桌面安装程序。
 
 [![Build Windows](https://github.com/viomat7064/openclaw-installer/actions/workflows/build-windows.yml/badge.svg)](https://github.com/viomat7064/openclaw-installer/actions/workflows/build-windows.yml)
 
 </div>
+
+---
+
+## 版本选择
+
+本项目提供两个版本，请根据需求选择：
+
+| 版本 | 分支 | 安装包大小 | 网络要求 | 适用场景 |
+|------|------|-----------|---------|---------|
+| **V1 (在线版)** | `main` | ~10MB | 需要联网 | 网络稳定，希望快速下载 |
+| **V2 (离线版)** | `v2-dev` | ~200MB | 可离线安装 | 无法访问 GitHub/npm，或网络不稳定 |
+
+### V1 vs V2 功能对比
+
+| 功能 | V1 | V2 |
+|------|----|----|
+| 7 步安装向导 | ✅ | ✅ |
+| 双安装模式 (npm/Docker) | ✅ | ✅ |
+| 自动依赖管理 | ✅ | ✅ (内置安装包) |
+| 12+ AI 模型提供商 | ✅ | ✅ |
+| 5 大消息平台 | ✅ | ✅ |
+| 中英双语 | ✅ (自动检测) | ✅ (欢迎页选择) |
+| 深色模式 | ✅ | ✅ |
+| 离线安装 | ❌ | ✅ |
+| 模型切换 + 参数调优 | ❌ | ✅ |
+| 自动故障诊断 | ❌ | ✅ |
+| macOS 支持 | ❌ | ✅ |
 
 ---
 
@@ -46,10 +73,17 @@
 
 ### 系统要求
 
+**Windows:**
 - Windows 10 或更高版本
 - 5GB 以上可用磁盘空间
 - 4GB 以上系统内存
-- 网络连接
+- 网络连接 (V1 必需，V2 可选)
+
+**macOS (V2 only):**
+- macOS 12 (Monterey) 或更高版本
+- 支持 Intel 和 Apple Silicon
+- 5GB 以上可用磁盘空间
+- 4GB 以上系统内存
 
 ## 开发
 
