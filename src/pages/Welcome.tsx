@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { RefreshCw, ArrowRight } from "lucide-react";
+import { RefreshCw, ArrowRight, Languages } from "lucide-react";
 import { WizardLayout } from "@/components/WizardLayout";
 import { EnvCheckItem } from "@/components/EnvCheckItem";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useWizard } from "@/context/WizardContext";
 import { useEnvDetection } from "@/hooks/useEnvDetection";
 
 export default function Welcome() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { envChecks } = useWizard();
   const { runDetection, isChecking } = useEnvDetection();
@@ -29,6 +29,11 @@ export default function Welcome() {
 
   const canProceed = allRequiredPass && !isChecking;
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language === "zh" ? "en" : "zh";
+    i18n.changeLanguage(newLang);
+  };
+
   const labelMap: Record<string, string> = {
     os: t("welcome.os.label"),
     nodejs: t("welcome.nodejs.label"),
@@ -42,6 +47,19 @@ export default function Welcome() {
   return (
     <WizardLayout step={1}>
       <div className="max-w-lg mx-auto space-y-6">
+        {/* Language Selector */}
+        <div className="flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={toggleLanguage}
+            className="gap-2"
+          >
+            <Languages className="h-4 w-4" />
+            {i18n.language === "zh" ? "English" : "中文"}
+          </Button>
+        </div>
+
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-bold">{t("welcome.title")}</h2>
           <p className="text-muted-foreground">{t("welcome.subtitle")}</p>
