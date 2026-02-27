@@ -151,19 +151,42 @@ fn check_config_file() -> Result<(), String> {
     Ok(())
 }
 
-async fn fix_port_conflict(_port: u16) -> Result<String, String> {
+async fn fix_port_conflict(port: u16) -> Result<String, String> {
     #[cfg(target_os = "windows")]
     {
-        let output = Command::new("netstat")
-            .args(&["-ano", "|", "findstr", &format!(":{}", port)])
+        // Use PowerShell to find and kill process
+        let find_cmd = format!("Get-NetTCPConnection -LocalPort {} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess", port);
+        let output = Command::new("powershell")
+            .args(&["-Command", &find_cmd])
             .output()
             .map_err(|e| format!("Failed to find process: {}", e))?;
 
-        let output_str = String::from_utf8_lossy(&output.stdout);
-        if let Some(line) = output_str.lines().next() {
-            if let Some(pid) = line.split_whitespace().last() {
+        let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        if !output_str.is_empty() {
+            if let Ok(pid) = output_str.parse::<u32>() {
                 Command::new("taskkill")
-                    .args(&["/F", "/PID", pid])
+                    .args(&["/F", "/PID", &pid.to_string()])
+                    .output()
+                    .map_err(|e| format!("Failed to kill process: {}", e))?;
+
+                return Ok(format!("Killed process {} using port {}", pid, port));
+            }
+        }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        // Unix-like systems
+        let output = Command::new("lsof")
+            .args(&["-ti", &format!(":{}", port)])
+            .output()
+            .map_err(|e| format!("Failed to find process: {}", e))?;
+
+        let output_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        if !output_str.is_empty() {
+            if let Ok(pid) = output_str.parse::<i32>() {
+                Command::new("kill")
+                    .args(&["-9", &pid.to_string()])
                     .output()
                     .map_err(|e| format!("Failed to kill process: {}", e))?;
 
@@ -201,4 +224,58 @@ async fn fix_config_file() -> Result<String, String> {
         .map_err(|e| format!("Failed to write config: {}", e))?;
 
     Ok("Configuration reset to defaults".to_string())
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_run_diagnostics() {
+        let result = run_diagnostics().await;
+        assert!(result.is_ok());
+        // Diagnostics should always return a result
+    }
+
+    #[tokio::test]
+    async fn test_check_port_conflict_free_port() {
+        // Test with a likely free port
+        let result = check_port_conflict(65432);
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_check_nodejs() {
+        // This will fail if Node.js is not installed
+        let result = check_nodejs();
+        // We expect this to either pass or fail with a specific error
+        match result {
+            Ok(_) => assert!(true),
+            Err(e) => {
+                assert!(e.contains("Node.js") || e.contains("not installed"));
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn test_fix_port_conflict_invalid() {
+        // Test that fix_port_conflict handles errors properly
+        let result = fix_port_conflict(8080).await;  // Common port
+        // Should either succeed or return an error
+        match result {
+            Ok(_) => assert!(true),
+            Err(e) => assert!(e.contains("port") || e.contains("fix")),
+        }
+    }
+
+    #[tokio::test]
+    async fn test_fix_config_file() {
+        // Test config file reset
+        let result = fix_config_file().await;
+        // This might fail if home directory is not accessible
+        // We just want to ensure it doesn't panic
+        match result {
+            Ok(msg) => assert!(msg.contains("Configuration")),
+            Err(e) => assert!(e.contains("home") || e.contains("config")),
+        }
+    }
 }

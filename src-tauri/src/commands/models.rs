@@ -185,3 +185,64 @@ pub async fn get_model_usage_stats() -> Result<Vec<ModelUsageStats>, String> {
         },
     ])
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_model_parameters_default() {
+        let params = ModelParameters::default();
+        assert_eq!(params.temperature, 0.7);
+        assert_eq!(params.max_tokens, 4096);
+        assert_eq!(params.top_p, 1.0);
+        assert!(params.stream);
+    }
+
+    #[tokio::test]
+    async fn test_validate_model_parameters_valid() {
+        let params = ModelParameters {
+            temperature: 0.7,
+            max_tokens: 2048,
+            top_p: 0.9,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.0,
+            stream: true,
+        };
+        let result = validate_model_parameters(params).await;
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_validate_model_parameters_invalid_temperature() {
+        let params = ModelParameters {
+            temperature: 3.0, // Invalid: > 2.0
+            max_tokens: 2048,
+            top_p: 0.9,
+            frequency_penalty: 0.0,
+            presence_penalty: 0.0,
+            stream: true,
+        };
+        let result = validate_model_parameters(params).await;
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_get_available_providers() {
+        let result = get_available_providers().await;
+        assert!(result.is_ok());
+        let providers = result.unwrap();
+        assert!(!providers.is_empty());
+        assert!(providers.iter().any(|p| p.id == "alibaba"));
+    }
+
+    #[tokio::test]
+    async fn test_get_model_presets() {
+        let result = get_model_presets().await;
+        assert!(result.is_ok());
+        let presets = result.unwrap();
+        assert_eq!(presets.len(), 3);
+        assert!(presets.iter().any(|p| p.name == "Creative"));
+        assert!(presets.iter().any(|p| p.name == "Balanced"));
+        assert!(presets.iter().any(|p| p.name == "Precise"));
+    }
+}
