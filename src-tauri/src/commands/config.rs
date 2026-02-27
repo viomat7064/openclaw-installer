@@ -39,7 +39,21 @@ impl Default for OpenClawConfig {
 
 fn get_openclaw_dir() -> Result<std::path::PathBuf, String> {
     let home = dirs::home_dir().ok_or("Cannot determine home directory")?;
-    Ok(home.join(".openclaw"))
+
+    #[cfg(target_os = "macos")]
+    {
+        // macOS: Use ~/Library/Application Support/OpenClaw
+        Ok(home
+            .join("Library")
+            .join("Application Support")
+            .join("OpenClaw"))
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        // Windows/Linux: Use ~/.openclaw
+        Ok(home.join(".openclaw"))
+    }
 }
 
 #[tauri::command]

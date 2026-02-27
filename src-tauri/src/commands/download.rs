@@ -14,10 +14,43 @@ pub struct DownloadProgress {
     pub error: Option<String>,
 }
 
-fn get_download_url(dep_id: &str) -> Result<&'static str, String> {
+fn get_download_url(dep_id: &str) -> Result<String, String> {
     match dep_id {
-        "nodejs" => Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0-x64.msi"),
-        "docker" => Ok("https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"),
+        "nodejs" => {
+            #[cfg(target_os = "windows")]
+            {
+                Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0-x64.msi".to_string())
+            }
+            #[cfg(target_os = "macos")]
+            {
+                // Detect architecture
+                let arch = std::env::consts::ARCH;
+                match arch {
+                    "x86_64" => Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0.pkg".to_string()),
+                    "aarch64" => Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0-arm64.pkg".to_string()),
+                    _ => Err(format!("Unsupported architecture: {}", arch)),
+                }
+            }
+            #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+            {
+                Err("Node.js download not supported on this platform".to_string())
+            }
+        }
+        "docker" => {
+            #[cfg(target_os = "windows")]
+            {
+                Ok("https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe".to_string())
+            }
+            #[cfg(target_os = "macos")]
+            {
+                // Docker Desktop for Mac (Universal)
+                Ok("https://desktop.docker.com/mac/main/amd64/Docker.dmg".to_string())
+            }
+            #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+            {
+                Err("Docker Desktop download not supported on this platform".to_string())
+            }
+        }
         _ => Err(format!("Unknown dependency: {}", dep_id)),
     }
 }

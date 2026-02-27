@@ -17,6 +17,19 @@ fn find_openclaw() -> String {
         if std::path::Path::new(&p).exists() {
             return p;
         }
+    } else if cfg!(target_os = "macos") {
+        // macOS: Check common npm global paths
+        let home = std::env::var("HOME").unwrap_or_default();
+        let paths = vec![
+            format!("{}/.npm-global/bin/openclaw", home),
+            "/usr/local/bin/openclaw".to_string(),
+            "/opt/homebrew/bin/openclaw".to_string(), // Apple Silicon
+        ];
+        for p in paths {
+            if std::path::Path::new(&p).exists() {
+                return p;
+            }
+        }
     }
     "openclaw".to_string()
 }
