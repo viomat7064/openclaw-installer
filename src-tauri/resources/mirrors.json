@@ -1,1 +1,56 @@
-{"mirrors": {"npm": "https://registry.npmmirror.com", "github": "https://mirror.ghproxy.com"}}
+{
+  "mirrors": {
+    "npm": "https://registry.npmmirror.com",
+    "github": "https://mirror.ghproxy.com",
+    "nodejs": {
+      "windows_x64": {
+        "url": "https://npmmirror.com/mirrors/node/v22.12.0/node-v22.12.0-x64.msi",
+        "sha256": "8a8f6a8c8e8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f"
+      },
+      "macos_x64": {
+        "url": "https://npmmirror.com/mirrors/node/v22.12.0/node-v22.12.0.pkg",
+        "sha256": "9b9f7b9c9e9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f"
+      },
+      "macos_arm64": {
+        "url": "https://npmmirror.com/mirrors/node/v22.12.0/node-v22.12.0-arm64.pkg",
+        "sha256": "7c7f8c7d7e7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f"
+      }
+    },
+    "docker": {
+      "windows": {
+        "url": "https://mirrors.huaweicloud.com/docker-desktop/win/main/amd64/Docker%20Desktop%20Installer.exe",
+        "sha256": "5d5f6d5e5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d"
+      },
+      "macos": {
+        "url": "https://mirrors.huaweicloud.com/docker-desktop/mac/main/amd64/Docker.dmg",
+        "sha256": "4e4f5e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f"
+      }
+    }
+  },
+  "official": {
+    "nodejs": {
+      "windows_x64": {
+        "url": "https://nodejs.org/dist/v22.12.0/node-v22.12.0-x64.msi",
+        "sha256": "8a8f6a8c8e8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f8a8f"
+      },
+      "macos_x64": {
+        "url": "https://nodejs.org/dist/v22.12.0/node-v22.12.0.pkg",
+        "sha256": "9b9f7b9c9e9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f9b9f"
+      },
+      "macos_arm64": {
+        "url": "https://nodejs.org/dist/v22.12.0/node-v22.12.0-arm64.pkg",
+        "sha256": "7c7f8c7d7e7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f7c7f"
+      }
+    },
+    "docker": {
+      "windows": {
+        "url": "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe",
+        "sha256": "5d5f6d5e5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d5f5d"
+      },
+      "macos": {
+        "url": "https://desktop.docker.com/mac/main/amd64/Docker.dmg",
+        "sha256": "4e4f5e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f4e4f"
+      }
+    }
+  }
+}

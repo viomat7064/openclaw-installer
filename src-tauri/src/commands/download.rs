@@ -3,6 +3,7 @@ use serde::Serialize;
 use std::io::Write;
 use std::time::Instant;
 use tauri::{AppHandle, Emitter};
+use sha2::{Sha256, Digest};
 
 #[derive(Clone, Serialize)]
 pub struct DownloadProgress {
@@ -14,22 +15,42 @@ pub struct DownloadProgress {
     pub error: Option<String>,
 }
 
-fn get_download_url(dep_id: &str) -> Result<String, String> {
+struct DownloadConfig {
+    url: String,
+    sha256: String,
+}
+
+#[allow(unused_variables)]
+fn get_download_config(dep_id: &str, use_mirror: bool) -> Result<DownloadConfig, String> {
+    let mirrors_json = include_str!("../../resources/mirrors.json");
+    let mirrors: serde_json::Value = serde_json::from_str(mirrors_json)
+        .map_err(|e| format!("Failed to parse mirrors.json: {}", e))?;
+
+    let source = if use_mirror { "mirrors" } else { "official" };
+
     match dep_id {
         "nodejs" => {
             #[cfg(target_os = "windows")]
             {
-                Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0-x64.msi".to_string())
+                let config = &mirrors[source]["nodejs"]["windows_x64"];
+                Ok(DownloadConfig {
+                    url: config["url"].as_str().ok_or("Missing nodejs URL")?.to_string(),
+                    sha256: config["sha256"].as_str().ok_or("Missing nodejs checksum")?.to_string(),
+                })
             }
             #[cfg(target_os = "macos")]
             {
-                // Detect architecture
                 let arch = std::env::consts::ARCH;
-                match arch {
-                    "x86_64" => Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0.pkg".to_string()),
-                    "aarch64" => Ok("https://nodejs.org/dist/v22.12.0/node-v22.12.0-arm64.pkg".to_string()),
-                    _ => Err(format!("Unsupported architecture: {}", arch)),
-                }
+                let key = match arch {
+                    "x86_64" => "macos_x64",
+                    "aarch64" => "macos_arm64",
+                    _ => return Err(format!("Unsupported architecture: {}", arch)),
+                };
+                let config = &mirrors[source]["nodejs"][key];
+                Ok(DownloadConfig {
+                    url: config["url"].as_str().ok_or(format!("Missing nodejs URL for {}", key))?.to_string(),
+                    sha256: config["sha256"].as_str().ok_or(format!("Missing nodejs checksum for {}", key))?.to_string(),
+                })
             }
             #[cfg(not(any(target_os = "windows", target_os = "macos")))]
             {
@@ -39,12 +60,19 @@ fn get_download_url(dep_id: &str) -> Result<String, String> {
         "docker" => {
             #[cfg(target_os = "windows")]
             {
-                Ok("https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe".to_string())
+                let config = &mirrors[source]["docker"]["windows"];
+                Ok(DownloadConfig {
+                    url: config["url"].as_str().ok_or("Missing docker URL")?.to_string(),
+                    sha256: config["sha256"].as_str().ok_or("Missing docker checksum")?.to_string(),
+                })
             }
             #[cfg(target_os = "macos")]
             {
-                // Docker Desktop for Mac (Universal)
-                Ok("https://desktop.docker.com/mac/main/amd64/Docker.dmg".to_string())
+                let config = &mirrors[source]["docker"]["macos"];
+                Ok(DownloadConfig {
+                    url: config["url"].as_str().ok_or("Missing docker URL")?.to_string(),
+                    sha256: config["sha256"].as_str().ok_or("Missing docker checksum")?.to_string(),
+                })
             }
             #[cfg(not(any(target_os = "windows", target_os = "macos")))]
             {
@@ -55,12 +83,27 @@ fn get_download_url(dep_id: &str) -> Result<String, String> {
     }
 }
 
+fn verify_checksum(file_path: &std::path::Path, expected: &str) -> Result<(), String> {
+    let mut file = std::fs::File::open(file_path)
+        .map_err(|e| format!("Failed to open file for checksum: {}", e))?;
+    let mut hasher = Sha256::new();
+    std::io::copy(&mut file, &mut hasher)
+        .map_err(|e| format!("Failed to compute checksum: {}", e))?;
+    let hash = format!("{:x}", hasher.finalize());
+
+    if hash != expected {
+        return Err(format!("Checksum mismatch: expected {}, got {}", expected, hash));
+    }
+    Ok(())
+}
+
 #[tauri::command]
 pub async fn download_dependency(
     app: AppHandle,
     dep_id: String,
+    use_mirror: bool,
 ) -> Result<String, String> {
-    let url = get_download_url(&dep_id)?;
+    let config = get_download_config(&dep_id, use_mirror)?;
 
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(600))
@@ -68,7 +111,7 @@ pub async fn download_dependency(
         .map_err(|e| format!("Failed to create HTTP client: {}", e))?;
 
     let response = client
-        .get(url)
+        .get(&config.url)
         .send()
         .await
         .map_err(|e| {
@@ -134,6 +177,31 @@ pub async fn download_dependency(
             });
             last_emit = Instant::now();
         }
+    }
+
+    // Verify checksum
+    drop(file); // Close file before verification
+    let _ = app.emit("download-progress", DownloadProgress {
+        id: dep_id.clone(),
+        downloaded,
+        total,
+        speed: 0,
+        phase: "verifying".to_string(),
+        error: None,
+    });
+
+    if let Err(e) = verify_checksum(&temp_path, &config.sha256) {
+        let _ = app.emit("download-progress", DownloadProgress {
+            id: dep_id.clone(),
+            downloaded: 0,
+            total: 0,
+            speed: 0,
+            phase: "error".to_string(),
+            error: Some(e.clone()),
+        });
+        // Delete corrupted file
+        let _ = std::fs::remove_file(&temp_path);
+        return Err(e);
     }
 
     // Final progress emit

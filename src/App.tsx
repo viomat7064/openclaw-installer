@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { WizardProvider } from "@/context/WizardContext";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import Welcome from "@/pages/Welcome";
 import ModeSelect from "@/pages/ModeSelect";
 import DependencyInstall from "@/pages/DependencyInstall";
@@ -15,28 +13,10 @@ import Doctor from "@/pages/Doctor";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function App() {
-  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-
-  useEffect(() => {
-    // Show language selector only on first app launch
-    const hasSelectedLanguage = localStorage.getItem("preferredLanguage");
-    if (!hasSelectedLanguage) {
-      setShowLanguageSelector(true);
-    }
-  }, []);
-
-  const handleLanguageSelect = () => {
-    setShowLanguageSelector(false);
-  };
-
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <WizardProvider>
-          <LanguageSelector
-            open={showLanguageSelector}
-            onSelect={handleLanguageSelect}
-          />
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/mode-select" element={<ModeSelect />} />

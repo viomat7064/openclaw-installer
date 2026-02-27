@@ -60,9 +60,9 @@ export function useDownload() {
   }, [setDependencies]);
 
   const startDownload = useCallback(
-    async (depId: string) => {
+    async (depId: string, useMirror: boolean = false) => {
       try {
-        const path = await invoke<string>("download_dependency", { depId });
+        const path = await invoke<string>("download_dependency", { depId, useMirror });
         setDependencies(
           depsRef.current.map((dep) =>
             dep.id === depId

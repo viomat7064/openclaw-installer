@@ -67,13 +67,13 @@ export default function DependencyInstall() {
   const handleDownloadAll = useCallback(async () => {
     for (const dep of dependencies) {
       if (dep.needed && dep.phase === "idle") {
-        const path = await startDownload(dep.id);
+        const path = await startDownload(dep.id, useMirror);
         if (path) {
           await installDependency(dep.id, path);
         }
       }
     }
-  }, [dependencies, startDownload, installDependency]);
+  }, [dependencies, startDownload, installDependency, useMirror]);
 
   // Auto-start downloads
   useEffect(() => {

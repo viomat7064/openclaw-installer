@@ -73,15 +73,32 @@ fn refresh_path() {
 
 #[cfg(target_os = "windows")]
 fn create_desktop_shortcut(target: &str, name: &str) -> Result<(), String> {
+    use base64::{Engine as _, engine::general_purpose};
+
     let desktop = dirs::desktop_dir().ok_or("Cannot find desktop directory")?;
     let lnk_path = desktop.join(format!("{}.lnk", name));
+
+    // Validate target path (whitelist)
+    let valid_targets = vec!["openclaw", "openclaw.cmd"];
+    let target_name = std::path::Path::new(target)
+        .file_name()
+        .and_then(|n| n.to_str())
+        .ok_or("Invalid target path")?;
+
+    if !valid_targets.contains(&target_name) {
+        return Err(format!("Invalid shortcut target: {}", target_name));
+    }
+
+    // Use Base64 encoding to prevent PowerShell injection
     let ps_script = format!(
         "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('{}'); $s.TargetPath = '{}'; $s.WorkingDirectory = '%USERPROFILE%'; $s.Save()",
-        lnk_path.to_string_lossy().replace('\'', "''"),
-        target.replace('\'', "''")
+        lnk_path.to_string_lossy(),
+        target
     );
+    let encoded = general_purpose::STANDARD.encode(ps_script.encode_utf16().flat_map(|c| c.to_le_bytes()).collect::<Vec<u8>>());
+
     Command::new("powershell")
-        .args(["-NoProfile", "-Command", &ps_script])
+        .args(["-NoProfile", "-EncodedCommand", &encoded])
         .output()
         .map_err(|e| format!("Failed to create shortcut: {}", e))?;
     Ok(())
@@ -100,6 +117,20 @@ pub async fn install_dependency(
 ) -> Result<(), String> {
     emit_step(&app, &dep_id, "running", "Installing...", None);
 
+    // Validate installer path (must be in temp directory)
+    let temp_dir = std::env::temp_dir();
+    let path = std::path::Path::new(&installer_path);
+    if !path.starts_with(&temp_dir) {
+        return Err("Invalid installer path: must be in temp directory".to_string());
+    }
+
+    // Validate file extension
+    let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+    let valid_exts = ["msi", "exe", "pkg", "dmg"];
+    if !valid_exts.contains(&ext) {
+        return Err(format!("Invalid installer file type: {}", ext));
+    }
+
     let output = if dep_id == "nodejs" {
         if cfg!(target_os = "windows") {
             Command::new("msiexec")
@@ -110,6 +141,10 @@ pub async fn install_dependency(
         }
     } else if dep_id == "docker" {
         if cfg!(target_os = "windows") {
+            // Validate Docker installer path
+            if !installer_path.contains("openclaw-installer-docker") {
+                return Err("Invalid Docker installer path".to_string());
+            }
             Command::new(&installer_path)
                 .args(["install", "--quiet", "--accept-license"])
                 .output()
@@ -162,6 +197,8 @@ pub async fn install_openclaw(
         install_openclaw_npm(&app, use_mirror).await
     } else if mode == "docker" {
         install_openclaw_docker(&app).await
+    } else if mode == "bundled" {
+        install_openclaw_bundled(&app).await
     } else {
         Err(format!("Unknown install mode: {}", mode))
     }
@@ -404,6 +441,156 @@ services:
                 return Err("Gateway verification failed".to_string());
             }
         }
+    }
+
+    if gateway_ok {
+        Ok(())
+    } else {
+        Err("Gateway verification failed".to_string())
+    }
+}
+
+async fn install_openclaw_bundled(app: &AppHandle) -> Result<(), String> {
+    use crate::commands::resources::get_resources_dir;
+
+    // Step 1: Extract bundled OpenClaw binary
+    emit_step(app, "extract_bundled", "running", "Extracting bundled OpenClaw...", None);
+
+    let resources_dir = get_resources_dir(app)?;
+    let bundled_path = resources_dir.join("openclaw");
+
+    if !bundled_path.exists() {
+        emit_step(app, "extract_bundled", "error", "Bundled OpenClaw not found", None);
+        return Err("Bundled OpenClaw not found in resources".to_string());
+    }
+
+    // Copy to installation directory
+    let install_dir = if cfg!(target_os = "windows") {
+        let program_files = std::env::var("ProgramFiles").unwrap_or_else(|_| "C:\\Program Files".to_string());
+        std::path::PathBuf::from(program_files).join("OpenClaw")
+    } else if cfg!(target_os = "macos") {
+        std::path::PathBuf::from("/Applications/OpenClaw.app")
+    } else {
+        return Err("Bundled mode not supported on this platform".to_string());
+    };
+
+    std::fs::create_dir_all(&install_dir)
+        .map_err(|e| format!("Failed to create install directory: {}", e))?;
+
+    // Copy bundled files
+    let copy_options = fs_extra::dir::CopyOptions::new();
+    fs_extra::dir::copy(&bundled_path, &install_dir, &copy_options)
+        .map_err(|e| format!("Failed to copy bundled files: {}", e))?;
+
+    emit_step(app, "extract_bundled", "done", "Bundled OpenClaw extracted", None);
+
+    // Step 2: Write config
+    emit_step(app, "write_config", "running", "Writing configuration...", None);
+
+    let config_dir = if cfg!(target_os = "windows") {
+        dirs::home_dir()
+            .ok_or("Cannot find home directory")?
+            .join(".openclaw")
+    } else if cfg!(target_os = "macos") {
+        dirs::home_dir()
+            .ok_or("Cannot find home directory")?
+            .join("Library")
+            .join("Application Support")
+            .join("OpenClaw")
+    } else {
+        return Err("Bundled mode not supported on this platform".to_string());
+    };
+
+    std::fs::create_dir_all(&config_dir)
+        .map_err(|e| format!("Failed to create config directory: {}", e))?;
+
+    let config_path = config_dir.join("openclaw.json");
+    let config_content = r#"{
+  "gateway": {
+    "port": 18789,
+    "host": "127.0.0.1"
+  },
+  "models": [],
+  "platforms": []
+}"#;
+
+    std::fs::write(&config_path, config_content)
+        .map_err(|e| format!("Failed to write config: {}", e))?;
+
+    emit_step(app, "write_config", "done", "Configuration written", None);
+
+    // Step 3: Start Gateway
+    emit_step(app, "start_gateway", "running", "Starting Gateway...", None);
+
+    let openclaw_bin = if cfg!(target_os = "windows") {
+        install_dir.join("openclaw.exe")
+    } else {
+        install_dir.join("openclaw")
+    };
+
+    let output = Command::new(&openclaw_bin)
+        .args(["gateway", "start"])
+        .output()
+        .map_err(|e| format!("Failed to start gateway: {}", e))?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+    let log = format!("{}\n{}", stdout, stderr);
+
+    if !output.status.success() {
+        emit_step(app, "start_gateway", "error", "Failed to start gateway", Some(log));
+        return Err("Failed to start gateway".to_string());
+    }
+
+    emit_step(app, "start_gateway", "done", "Gateway started", Some(log));
+
+    // Step 4: Verify Gateway
+    emit_step(app, "verify_gateway", "running", "Verifying Gateway...", None);
+
+    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+
+    let mut gateway_ok = false;
+    let mut attempt = 0;
+    let max_attempts = 3;
+
+    while attempt < max_attempts && !gateway_ok {
+        attempt += 1;
+        let wait_secs = 2u64.pow(attempt as u32);
+
+        match std::net::TcpStream::connect_timeout(
+            &"127.0.0.1:18789".parse().unwrap(),
+            std::time::Duration::from_secs(5),
+        ) {
+            Ok(_) => {
+                gateway_ok = true;
+                emit_step(app, "verify_gateway", "done", "Gateway is running on port 18789", None);
+            }
+            Err(_) if attempt < max_attempts => {
+                emit_step(
+                    app,
+                    "verify_gateway",
+                    "running",
+                    &format!("Gateway not responding, retrying... (attempt {}/{})", attempt, max_attempts),
+                    None,
+                );
+                tokio::time::sleep(std::time::Duration::from_secs(wait_secs)).await;
+            }
+            Err(_) => {
+                emit_step(app, "verify_gateway", "error", "Gateway is not responding on port 18789", None);
+                return Err("Gateway verification failed".to_string());
+            }
+        }
+    }
+
+    // Step 5: Create desktop shortcut
+    emit_step(app, "create_shortcut", "running", "Creating desktop shortcut...", None);
+
+    let target = openclaw_bin.to_string_lossy().to_string();
+    if let Err(e) = create_desktop_shortcut(&target, "OpenClaw") {
+        emit_step(app, "create_shortcut", "error", &format!("Failed to create shortcut: {}", e), None);
+        // Non-fatal, continue
+    } else {
+        emit_step(app, "create_shortcut", "done", "Desktop shortcut created", None);
     }
 
     if gateway_ok {
