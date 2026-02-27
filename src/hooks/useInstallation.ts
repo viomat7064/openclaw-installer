@@ -11,8 +11,17 @@ interface InstallStepPayload {
 }
 
 export function useInstallation() {
-  const { setInstallSteps, setInstallComplete, setOpenclawVersion, useMirror, installMode } = useWizard();
+  const {
+    setInstallSteps,
+    setInstallComplete,
+    setOpenclawVersion,
+    setInstallProgress,
+    setCurrentStepOutput,
+    useMirror,
+    installMode
+  } = useWizard();
   const stepsRef = useRef<InstallStepStatus[]>([]);
+  const outputRef = useRef<string>("");
 
   useEffect(() => {
     let unlisten: UnlistenFn | null = null;
@@ -36,6 +45,18 @@ export function useInstallation() {
       stepsRef.current = updated;
       setInstallSteps(updated);
 
+      // Update progress based on completed steps
+      const totalSteps = updated.length;
+      const completedSteps = updated.filter(s => s.status === "done" || s.status === "error").length;
+      const progress = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+      setInstallProgress(progress);
+
+      // Update current step output
+      if (p.log) {
+        outputRef.current += p.log + "\n";
+        setCurrentStepOutput(outputRef.current);
+      }
+
       // Extract version from verify step
       if (p.id === "verify_version" && p.status === "done") {
         const match = p.message.match(/OpenClaw\s+(.*)/);
@@ -48,7 +69,7 @@ export function useInstallation() {
     return () => {
       unlisten?.();
     };
-  }, [setInstallSteps, setOpenclawVersion]);
+  }, [setInstallSteps, setOpenclawVersion, setInstallProgress, setCurrentStepOutput]);
 
   const startInstall = useCallback(async () => {
     const mode = installMode ?? "npm";
@@ -82,10 +103,13 @@ export function useInstallation() {
 
   const retryInstall = useCallback(() => {
     stepsRef.current = [];
+    outputRef.current = "";
     setInstallSteps([]);
     setInstallComplete(false);
+    setInstallProgress(0);
+    setCurrentStepOutput("");
     startInstall();
-  }, [startInstall, setInstallSteps, setInstallComplete]);
+  }, [startInstall, setInstallSteps, setInstallComplete, setInstallProgress, setCurrentStepOutput]);
 
   return { startInstall, retryInstall };
 }

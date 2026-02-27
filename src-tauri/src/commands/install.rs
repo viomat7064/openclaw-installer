@@ -273,7 +273,7 @@ async fn install_openclaw_npm(app: &AppHandle, use_mirror: bool) -> Result<(), S
 
     while attempt < max_attempts && !gateway_ok {
         attempt += 1;
-        let wait_secs = 2 + (attempt as u64);
+        let wait_secs = 2u64.pow(attempt as u32); // Exponential: 2, 4, 8
 
         match std::net::TcpStream::connect_timeout(
             &"127.0.0.1:18789".parse().unwrap(),
@@ -379,7 +379,7 @@ services:
 
     while attempt < max_attempts && !gateway_ok {
         attempt += 1;
-        let wait_secs = 2 + (attempt as u64);
+        let wait_secs = 2u64.pow(attempt as u32); // Exponential: 2, 4, 8
 
         match std::net::TcpStream::connect_timeout(
             &"127.0.0.1:18789".parse().unwrap(),

@@ -23,7 +23,12 @@ export function LanguageSelector({ open, onSelect }: LanguageSelectorProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      // Only allow closing after language is selected
+      if (!isOpen && localStorage.getItem("preferredLanguage")) {
+        onSelect(localStorage.getItem("preferredLanguage")!);
+      }
+    }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Select Language / 选择语言</DialogTitle>
