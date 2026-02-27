@@ -4,8 +4,10 @@ use commands::config::{detect_npm_registry, read_openclaw_config, test_api_conne
 use commands::detect::detect_environment;
 use commands::download::download_dependency;
 use commands::install::{install_dependency, install_openclaw};
+use commands::models::{get_available_providers, get_model_presets, get_model_usage_stats, validate_model_parameters};
 use commands::service::{gateway_start, gateway_stop, gateway_restart, gateway_status};
 use commands::doctor::run_doctor;
+use commands::troubleshoot::{fix_issue, run_diagnostics};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -26,6 +28,12 @@ pub fn run() {
             gateway_restart,
             gateway_status,
             run_doctor,
+            get_available_providers,
+            get_model_presets,
+            get_model_usage_stats,
+            validate_model_parameters,
+            run_diagnostics,
+            fix_issue,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
