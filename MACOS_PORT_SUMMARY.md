@@ -162,9 +162,10 @@ match arch {
 
 ### 立即可做
 1. ✅ 代码已提交到 v2-macos 分支
-2. ⏳ 推送到 GitHub 触发 CI/CD
-3. ⏳ 等待 macOS 构建完成
-4. ⏳ 下载 DMG 进行测试
+2. ✅ 推送到 GitHub 触发 CI/CD
+3. ✅ macOS 构建完成 (Run #22474759631)
+4. ✅ 产物已生成 (macos-dmg: 5MB, macos-app: 5MB)
+5. ⏳ 下载 DMG 进行测试
 
 ### 短期 (v2.0-beta)
 1. ⏳ 在 macOS 环境测试所有功能
@@ -264,8 +265,10 @@ match arch {
 
 ---
 
-**macOS 移植已完成，等待实际测试验证！** 🚀
+**macOS 移植已完成，CI/CD 构建成功！** 🎉
 
 **分支**: v2-macos
-**提交**: 046ff92
-**状态**: ✅ Ready for Testing
+**最新提交**: 3e91ec6
+**CI/CD**: ✅ Build #22474759631 成功
+**产物**: macos-dmg (5MB) + macos-app (5MB)
+**状态**: ✅ Ready for Download & Testing
