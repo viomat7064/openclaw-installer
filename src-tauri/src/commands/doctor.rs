@@ -89,5 +89,29 @@ pub async fn run_doctor() -> Result<Vec<DoctorCheck>, String> {
         message: if net_ok { "Connected".to_string() } else { "No connection".to_string() },
     });
 
+    // Check Windows service status (only if registered)
+    #[cfg(target_os = "windows")]
+    {
+        let svc_output = Command::new("sc")
+            .args(["query", "OpenClawGateway"])
+            .output();
+        if let Ok(output) = svc_output {
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                let running = stdout.contains("RUNNING");
+                checks.push(DoctorCheck {
+                    id: "windows_service".to_string(),
+                    label: "Windows Service".to_string(),
+                    ok: running,
+                    message: if running {
+                        "Registered and running".to_string()
+                    } else {
+                        "Registered but not running".to_string()
+                    },
+                });
+            }
+        }
+    }
+
     Ok(checks)
 }

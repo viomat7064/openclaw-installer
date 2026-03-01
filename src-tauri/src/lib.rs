@@ -9,6 +9,7 @@ use commands::resources::{extract_bundled_openclaw, get_mirrors, list_bundled_re
 use commands::service::{gateway_start, gateway_stop, gateway_restart, gateway_status};
 use commands::doctor::run_doctor;
 use commands::troubleshoot::{fix_issue, run_diagnostics};
+use commands::windows_service::{check_service_status, register_service, unregister_service, start_windows_service, stop_windows_service};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -38,6 +39,11 @@ pub fn run() {
             list_bundled_resources,
             get_mirrors,
             extract_bundled_openclaw,
+            check_service_status,
+            register_service,
+            unregister_service,
+            start_windows_service,
+            stop_windows_service,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

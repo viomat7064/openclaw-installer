@@ -13,7 +13,7 @@ export default function Complete() {
   const { openclawVersion } = useWizard();
 
   return (
-    <WizardLayout step={7}>
+    <WizardLayout step={8}>
       <div className="max-w-lg mx-auto space-y-6">
         <div className="text-center space-y-3">
           <PartyPopper className="h-12 w-12 text-yellow-500 mx-auto" />

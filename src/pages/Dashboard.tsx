@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { Activity, Square, Play, RotateCw, ExternalLink, Settings, Stethoscope, ArrowLeft } from "lucide-react";
+import { Activity, Square, Play, RotateCw, ExternalLink, Settings, Stethoscope, ArrowLeft, Shield, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,12 +16,21 @@ interface GatewayStatus {
   port: number;
 }
 
+interface ServiceInfo {
+  installed: boolean;
+  running: boolean;
+  service_name: string;
+  startup_type: string;
+}
+
 export default function Dashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { platforms } = useWizard();
   const [status, setStatus] = useState<GatewayStatus | null>(null);
   const [loading, setLoading] = useState("");
+  const [serviceInfo, setServiceInfo] = useState<ServiceInfo | null>(null);
+  const [serviceLoading, setServiceLoading] = useState(false);
 
   const checkStatus = useCallback(async () => {
     try {
@@ -37,6 +46,34 @@ export default function Dashboard() {
     const interval = setInterval(checkStatus, 5000);
     return () => clearInterval(interval);
   }, [checkStatus]);
+
+  // Service status polling
+  const checkServiceStatus = useCallback(async () => {
+    try {
+      const s = await invoke<ServiceInfo>("check_service_status");
+      setServiceInfo(s);
+    } catch {
+      setServiceInfo(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkServiceStatus();
+    const interval = setInterval(checkServiceStatus, 10000);
+    return () => clearInterval(interval);
+  }, [checkServiceStatus]);
+
+  const handleUnregisterService = async () => {
+    setServiceLoading(true);
+    try {
+      await invoke<string>("unregister_service");
+      await checkServiceStatus();
+    } catch (err) {
+      console.error("Unregister failed:", err);
+    } finally {
+      setServiceLoading(false);
+    }
+  };
 
   const handleAction = async (action: string) => {
     setLoading(action);
@@ -70,6 +107,12 @@ export default function Dashboard() {
               <Badge variant={status?.running ? "success" : "destructive"}>
                 {status?.running ? t("dashboard.running") : t("dashboard.stopped")}
               </Badge>
+              {serviceInfo?.installed && (
+                <Badge variant="secondary" className="gap-1">
+                  <Shield className="h-3 w-3" />
+                  {t("dashboard.serviceRegistered")}
+                </Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -98,6 +141,23 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
+            {serviceInfo?.installed && (
+              <div className="flex items-center justify-between mt-3 pt-3 border-t">
+                <span className="text-xs text-muted-foreground">
+                  {t("dashboard.serviceStatus")}: {serviceInfo.startup_type}
+                </span>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleUnregisterService}
+                  disabled={serviceLoading}
+                  className="gap-1"
+                >
+                  <ShieldOff className="h-3 w-3" />
+                  {t("dashboard.unregisterService")}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 

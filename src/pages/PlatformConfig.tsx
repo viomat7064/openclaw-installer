@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, AlertTriangle } from "lucide-react";
 import { WizardLayout } from "@/components/WizardLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +17,7 @@ const PLATFORMS = [
 export default function PlatformConfig() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { platforms, setPlatforms } = useWizard();
+  const { platforms, setPlatforms, installMode } = useWizard();
   const [selected, setSelected] = useState<Set<string>>(
     new Set(platforms.map((p) => p.platform))
   );
@@ -65,9 +65,12 @@ export default function PlatformConfig() {
                 selected.has(p.id)
                   ? "border-primary bg-primary/5 font-medium"
                   : "border-border hover:border-primary/50"
-              }`}
+              } ${p.id === "whatsapp" && installMode === "npm" ? "opacity-60" : ""}`}
             >
               <span className="truncate">{p.name}</span>
+              {p.id === "whatsapp" && installMode === "npm" && (
+                <AlertTriangle className="h-3 w-3 text-yellow-600 shrink-0" />
+              )}
               <a
                 href={p.url}
                 target="_blank"
@@ -80,6 +83,16 @@ export default function PlatformConfig() {
             </button>
           ))}
         </div>
+
+        {/* WhatsApp warning for npm mode */}
+        {installMode === "npm" && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800">
+            <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-yellow-700 dark:text-yellow-400">
+              {t("platformConfig.whatsappWarning")}
+            </p>
+          </div>
+        )}
 
         {/* Token inputs for selected platforms */}
         {Array.from(selected).map((id) => {

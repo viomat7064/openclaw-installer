@@ -7,6 +7,7 @@ import ModelConfig from "@/pages/ModelConfig";
 import PlatformConfig from "@/pages/PlatformConfig";
 import Installing from "@/pages/Installing";
 import Complete from "@/pages/Complete";
+import ServiceConfig from "@/pages/ServiceConfig";
 import Dashboard from "@/pages/Dashboard";
 import SettingsPage from "@/pages/Settings";
 import Doctor from "@/pages/Doctor";
@@ -24,6 +25,7 @@ function App() {
             <Route path="/model-config" element={<ModelConfig />} />
             <Route path="/platform-config" element={<PlatformConfig />} />
             <Route path="/installing" element={<Installing />} />
+            <Route path="/service-config" element={<ServiceConfig />} />
             <Route path="/complete" element={<Complete />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<SettingsPage />} />

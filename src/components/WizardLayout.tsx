@@ -8,7 +8,7 @@ interface WizardLayoutProps {
   totalSteps?: number;
 }
 
-export function WizardLayout({ children, step, totalSteps = 7 }: WizardLayoutProps) {
+export function WizardLayout({ children, step, totalSteps = 8 }: WizardLayoutProps) {
   const { t } = useTranslation();
 
   const stepLabels = [
@@ -18,6 +18,7 @@ export function WizardLayout({ children, step, totalSteps = 7 }: WizardLayoutPro
     t("wizard.steps.modelConfig"),
     t("wizard.steps.platformConfig"),
     t("wizard.steps.installing"),
+    t("wizard.steps.serviceConfig"),
     t("wizard.steps.complete"),
   ];
 

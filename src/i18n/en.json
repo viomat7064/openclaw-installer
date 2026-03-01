@@ -7,6 +7,7 @@
       "modelConfig": "Model Config",
       "platformConfig": "Platforms",
       "installing": "Install",
+      "serviceConfig": "Service",
       "complete": "Complete"
     }
   },
@@ -129,6 +130,7 @@
     "skip": "Skip",
     "next": "Next",
     "howToGet": "How to get?",
+    "whatsappWarning": "WhatsApp is not available in npm mode. Please use Docker mode if you need WhatsApp integration.",
     "placeholder": {
       "title": "Coming Soon",
       "desc": "Platform configuration will be available in a future version",
@@ -170,7 +172,10 @@
     "openWebchat": "Open WebChat",
     "openSettings": "Settings",
     "openDoctor": "Diagnostics",
-    "backToWizard": "Back to Wizard"
+    "backToWizard": "Back to Wizard",
+    "serviceRegistered": "Registered as Service",
+    "serviceStatus": "Service",
+    "unregisterService": "Unregister Service"
   },
   "settings": {
     "title": "Settings",
@@ -184,7 +189,14 @@
     "apiEndpoint": "API Endpoint",
     "save": "Save",
     "saved": "Saved",
-    "back": "Back"
+    "back": "Back",
+    "serviceSection": "Service Management",
+    "serviceName": "Service Name",
+    "startupType": "Startup Type",
+    "serviceRunning": "Status",
+    "registerService": "Register as Service",
+    "unregisterService": "Unregister Service",
+    "serviceNotRegistered": "Gateway is not registered as a Windows service. Register to enable auto-start on boot."
   },
   "doctor": {
     "title": "System Diagnostics",
@@ -194,5 +206,22 @@
     "hasIssues": "Issues found",
     "recheck": "Re-check",
     "back": "Back"
+  },
+  "serviceConfig": {
+    "title": "Service Configuration",
+    "description": "OpenClaw Gateway has been installed. You can optionally register it as a Windows service for auto-start on boot.",
+    "enableService": "Register as Windows Service (Auto-start)",
+    "benefit1": "Gateway runs automatically in the background",
+    "benefit2": "No need to manually start after reboot",
+    "benefit3": "Can be unregistered anytime from Dashboard",
+    "skip": "Skip",
+    "register": "Register & Continue",
+    "registering": "Registering service...",
+    "success": "Service registered successfully!",
+    "error": "Service registration failed",
+    "retry": "Retry",
+    "continueAnyway": "Continue Anyway",
+    "continue": "Continue",
+    "whatsappWarning": "WhatsApp is not available in npm mode. Use Docker mode for WhatsApp support."
   }
 }

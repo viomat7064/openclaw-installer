@@ -71,6 +71,8 @@ interface WizardState {
   setFailedStepId: (id: string | null) => void;
   autoFixAttempts: number;
   setAutoFixAttempts: (a: number) => void;
+  serviceRegistered: boolean;
+  setServiceRegistered: (v: boolean) => void;
 }
 
 const WizardContext = createContext<WizardState | null>(null);
@@ -94,6 +96,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const [currentStepOutput, setCurrentStepOutput] = useState("");
   const [failedStepId, setFailedStepId] = useState<string | null>(null);
   const [autoFixAttempts, setAutoFixAttempts] = useState(0);
+  const [serviceRegistered, setServiceRegistered] = useState(false);
 
   return (
     <WizardContext.Provider
@@ -111,6 +114,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         currentStepOutput, setCurrentStepOutput,
         failedStepId, setFailedStepId,
         autoFixAttempts, setAutoFixAttempts,
+        serviceRegistered, setServiceRegistered,
       }}
     >
       {children}

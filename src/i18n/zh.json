@@ -7,6 +7,7 @@
       "modelConfig": "模型配置",
       "platformConfig": "平台配置",
       "installing": "安装",
+      "serviceConfig": "服务",
       "complete": "完成"
     }
   },
@@ -129,6 +130,7 @@
     "skip": "跳过",
     "next": "下一步",
     "howToGet": "如何获取？",
+    "whatsappWarning": "npm 模式下 WhatsApp 通道不可用，如需使用 WhatsApp 请选择 Docker 安装模式。",
     "placeholder": {
       "title": "即将推出",
       "desc": "平台配置功能将在后续版本中提供",
@@ -170,7 +172,10 @@
     "openWebchat": "打开 WebChat",
     "openSettings": "设置",
     "openDoctor": "诊断",
-    "backToWizard": "返回安装向导"
+    "backToWizard": "返回安装向导",
+    "serviceRegistered": "已注册为服务",
+    "serviceStatus": "服务状态",
+    "unregisterService": "取消服务注册"
   },
   "settings": {
     "title": "设置",
@@ -184,7 +189,14 @@
     "apiEndpoint": "API 端点",
     "save": "保存",
     "saved": "已保存",
-    "back": "返回"
+    "back": "返回",
+    "serviceSection": "服务管理",
+    "serviceName": "服务名称",
+    "startupType": "启动类型",
+    "serviceRunning": "运行状态",
+    "registerService": "注册为服务",
+    "unregisterService": "取消注册",
+    "serviceNotRegistered": "Gateway 尚未注册为 Windows 服务。注册后可实现开机自动启动。"
   },
   "doctor": {
     "title": "系统诊断",
@@ -194,5 +206,22 @@
     "hasIssues": "发现问题",
     "recheck": "重新检查",
     "back": "返回"
+  },
+  "serviceConfig": {
+    "title": "服务配置",
+    "description": "OpenClaw Gateway 已成功安装。你可以选择将其注册为 Windows 服务，实现开机自动启动。",
+    "enableService": "注册为 Windows 服务（开机自启）",
+    "benefit1": "Gateway 将在后台自动运行",
+    "benefit2": "开机后无需手动启动",
+    "benefit3": "可随时在管理面板中取消注册",
+    "skip": "跳过",
+    "register": "注册并继续",
+    "registering": "正在注册服务...",
+    "success": "服务注册成功！",
+    "error": "服务注册失败",
+    "retry": "重试",
+    "continueAnyway": "继续",
+    "continue": "继续",
+    "whatsappWarning": "npm 模式下 WhatsApp 通道不可用，如需 WhatsApp 请使用 Docker 模式。"
   }
 }

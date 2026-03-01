@@ -7,3 +7,4 @@ pub mod models;
 pub mod resources;
 pub mod service;
 pub mod troubleshoot;
+pub mod windows_service;

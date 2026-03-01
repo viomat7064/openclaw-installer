@@ -33,7 +33,7 @@ export default function Installing() {
 
   useEffect(() => {
     if (installComplete) {
-      const timer = setTimeout(() => navigate("/complete"), 1500);
+      const timer = setTimeout(() => navigate("/service-config"), 1500);
       return () => clearTimeout(timer);
     }
   }, [installComplete, navigate]);

@@ -1,6 +1,7 @@
 use serde::Serialize;
 use std::process::Command;
-use tauri::{AppHandle, Emitter};
+#[allow(unused_imports)]
+use tauri::{AppHandle, Emitter, Manager};
 
 #[derive(Clone, Serialize)]
 pub struct InstallStep {
@@ -591,6 +592,32 @@ async fn install_openclaw_bundled(app: &AppHandle) -> Result<(), String> {
         // Non-fatal, continue
     } else {
         emit_step(app, "create_shortcut", "done", "Desktop shortcut created", None);
+    }
+
+    // Step 6: Copy NSSM tool for optional service registration
+    emit_step(app, "copy_nssm", "running", "Preparing service tools...", None);
+    #[cfg(target_os = "windows")]
+    {
+        let resource_dir = app.path().resource_dir().unwrap_or_default();
+        let nssm_source = resource_dir.join("resources").join("tools").join("nssm.exe");
+        let appdata = std::env::var("APPDATA").unwrap_or_default();
+        let nssm_dest_dir = std::path::PathBuf::from(&appdata).join("OpenClaw").join("tools");
+        let nssm_dest = nssm_dest_dir.join("nssm.exe");
+        if nssm_source.exists() {
+            if let Err(e) = std::fs::create_dir_all(&nssm_dest_dir) {
+                emit_step(app, "copy_nssm", "done", &format!("Skipped NSSM setup: {}", e), None);
+            } else if let Err(e) = std::fs::copy(&nssm_source, &nssm_dest) {
+                emit_step(app, "copy_nssm", "done", &format!("Skipped NSSM setup: {}", e), None);
+            } else {
+                emit_step(app, "copy_nssm", "done", "Service tools ready", None);
+            }
+        } else {
+            emit_step(app, "copy_nssm", "done", "NSSM not bundled, skipping", None);
+        }
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        emit_step(app, "copy_nssm", "done", "Skipped (not Windows)", None);
     }
 
     if gateway_ok {
